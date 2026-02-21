@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Notes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+</head>
+
+<body>
+
+    <div class="topbar">
+        <a href="{{ url_for('index') }}" class="{% if request.path == '/' %}active-tab{% endif %}">
+            Заметки
+        </a>
+
+        <a href="{{ url_for('recipes') }}" class="{% if request.path == '/recipes' %}active-tab{% endif %}">
+            Рецепты
+        </a>
+    </div>
+    <div style="display:flex;">
+        <div class="sidebar">
+            <h3>Категории</h3>
+
+            <a href="{{ url_for('index') }}">Все</a><br><br>
+
+            {% for category in categories %}
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <a href="{{ url_for('index', category=category.id) }}"
+                    class="{% if active_category == category.id|string %}active{% endif %}">
+                    {{ category.name }}
+                </a>
+
+                <form method="POST" action="{{ url_for('delete_category', category_id=category.id) }}"
+                    style="margin:0;">
+                    <button type="submit" style="background:none;border:none;color:red;cursor:pointer;">
+                        🗑
+                    </button>
+                </form>
+            </div>
+            {% endfor %}
+
+            <hr>
+
+            <form method="POST" action="{{ url_for('add_category') }}">
+                <input type="text" name="name" placeholder="Новая категория" required>
+                <button type="submit">Добавить</button>
+            </form>
+        </div>
+
+        <div class="content">
+            <h2>Заметки</h2>
+
+            <form method="POST" action="{{ url_for('add_note') }}">
+                <input type="text" name="title" placeholder="Заголовок" required>
+                <textarea name="content" placeholder="Текст заметки" required></textarea>
+                <select name="category_id">
+                    <option value="">Без категории</option>
+                    {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Добавить заметку</button>
+            </form>
+
+            <hr>
+
+            {% for note in notes %}
+            <div>
+                <h4>{{ note.title }}</h4>
+                <p>{{ note.content }}</p>
+            </div>
+            <hr>
+            {% endfor %}
+        </div>
+    </div>
+
+</body>
+
+</html>
