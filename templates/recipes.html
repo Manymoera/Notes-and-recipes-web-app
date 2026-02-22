@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Notes</title>
+    <title>Recipes</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
 </head>
 
@@ -21,17 +21,18 @@
         <div class="sidebar">
             <h3>Категории</h3>
 
-            <a href="{{ url_for('index') }}">Все</a><br><br>
+            <a href="{{ url_for('recipes') }}">Все</a><br><br>
 
             {% for category in categories %}
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <a href="{{ url_for('index', category=category.id) }}"
-                    class="{% if active_category == category.id|string %}active{% endif %}">
+                <a href="{{ url_for('recipes', category=category.id) }}"
+                    class="{% if active_category == category.id %}active{% endif %}">
                     {{ category.name }}
                 </a>
 
-                <form method="POST" action="{{ url_for('delete_category', category_id=category.id) }}"
+                <form method="POST" action="{{ url_for('delete_category_recipe', category_id=category.id) }}"
                     style="margin:0;">
+                    <input type="hidden" name="next" value="{{ request.path }}">
                     <button type="submit" style="background:none;border:none;color:red;cursor:pointer;">
                         🗑
                     </button>
@@ -41,39 +42,61 @@
 
             <hr>
 
-            <form method="POST" action="{{ url_for('add_category') }}">
+            <form method="POST" action="{{ url_for('add_category_recipe') }}">
+                <input type="hidden" name="next" value="{{ request.path }}">
                 <input type="text" name="name" placeholder="Новая категория" required>
                 <button type="submit">Добавить</button>
             </form>
         </div>
 
         <div class="content">
+            <button onclick="openModal()">Добавить рецепт</button>
 
-            <form method="POST" action="{{ url_for('add_note') }}">
-                <input type="text" name="title" placeholder="Заголовок" required>
-                <textarea name="content" placeholder="Текст заметки" required></textarea>
-                <select name="category_id">
-                    <option value="">Без категории</option>
-                    {% for category in categories %}
-                    <option value="{{ category.id }}">{{ category.name }}</option>
-                    {% endfor %}
-                </select>
-                <button type="submit">Добавить заметку</button>
-            </form>
-
-            <hr>
-
-            {% for note in notes %}
-            <div>
-                <h4>{{ note.title }}</h4>
-                <p>{{ note.content }}</p>
+            <!-- Модальное окно -->
+            <div id="modal" class="modal">
+                <div class="modal-content">
+                    <form method="POST" action="{{ url_for('add_recipe') }}">
+                        <input type="text" name="url" placeholder="Вставьте URL рецепта" required>
+                        <select name="category_id">
+                            <option value="">Без категории</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit">Создать</button>
+                        <button type="button" onclick="closeModal()">Отмена</button>
+                    </form>
+                </div>
             </div>
-            <hr>
-            {% endfor %}
 
-            <a href="{{ url_for('index') }}">Назад к заметкам</a>
+            <div class="recipe-list">
+                {% for recipe in recipes %}
+                <div class="recipe-item">
+                    {% if recipe.image_url %}
+                    <img src="{{ recipe.image_url }}">
+                    {% endif %}
+                    <a href="{{ recipe.source_url }}" target="_blank">
+                        {{ recipe.title }}
+                    </a>
+                    <form method="POST" action="{{ url_for('delete_recipe', recipe_id=recipe.id) }}">
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <button type="submit" style="background:none;border:none;color:red;cursor:pointer;">🗑</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
         </div>
     </div>
+
+    <script>
+        function openModal() {
+            document.getElementById("modal").style.display = "flex";
+        }
+        function closeModal() {
+            document.getElementById("modal").style.display = "none";
+        }
+    </script>
+
 </body>
 
 </html>

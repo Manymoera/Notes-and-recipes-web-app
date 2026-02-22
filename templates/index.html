@@ -32,6 +32,7 @@
 
                 <form method="POST" action="{{ url_for('delete_category', category_id=category.id) }}"
                     style="margin:0;">
+                    <input type="hidden" name="next" value="{{ request.path }}">
                     <button type="submit" style="background:none;border:none;color:red;cursor:pointer;">
                         🗑
                     </button>
@@ -42,6 +43,7 @@
             <hr>
 
             <form method="POST" action="{{ url_for('add_category') }}">
+                <input type="hidden" name="next" value="{{ request.path }}">
                 <input type="text" name="name" placeholder="Новая категория" required>
                 <button type="submit">Добавить</button>
             </form>
@@ -65,11 +67,17 @@
             <hr>
 
             {% for note in notes %}
-            <div>
-                <h4>{{ note.title }}</h4>
+            <div class="note">
+                <div class="note-header">
+                    <h3>{{ note.title }}</h3>
+
+                    <form method="POST" action="{{ url_for('delete_note', note_id=note.id) }}" style="display:inline;">
+                        <button type="submit" class="delete-btn">🗑</button>
+                    </form>
+                </div>
+
                 <p>{{ note.content }}</p>
             </div>
-            <hr>
             {% endfor %}
         </div>
     </div>

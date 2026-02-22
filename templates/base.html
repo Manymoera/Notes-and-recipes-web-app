@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<!-- Верхняя панель -->
+<div class="topbar">
+    <a href="{{ url_for('index') }}"
+       class="{% if request.path == '/' %}active-tab{% endif %}">
+        Заметки
+    </a>
+
+    <a href="{{ url_for('recipes_page') }}"
+       class="{% if request.path.startswith('/recipes') %}active-tab{% endif %}">
+        Рецепты
+    </a>
+</div>
+
+<div style="display:flex;">
+
+    <!-- Боковая панель -->
+    <div class="sidebar">
+        {% block sidebar %}
+        {% endblock %}
+    </div>
+
+    <!-- Основной контент -->
+    <div class="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+</div>
+
+</body>
+</html>
