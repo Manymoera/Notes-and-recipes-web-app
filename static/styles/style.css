@@ -21,6 +21,7 @@
 body {
     margin: 0;
     font-family: Arial;
+    box-sizing: border-box;
 }
 
 /* Sidebar и контент */
@@ -28,7 +29,7 @@ body {
     width: 250px;
     background: #f4f4f4;
     padding: 15px;
-    height: 100vh;
+    height: 100;
 }
 
 .content {
@@ -87,9 +88,12 @@ input, textarea, select {
 
 .recipe-item {
     display: flex;
+    justify-content: space-between; /* кнопка справа */
     align-items: center;
     gap: 15px;
     margin-top: 15px;
+    border:1px solid black;
+    padding: 5px;
 }
 
 .recipe-item img {
